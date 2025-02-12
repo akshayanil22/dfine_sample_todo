@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:dfine_todo/bloc/tasks/tasks_bloc.dart';
 import 'package:dfine_todo/models/task_model.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,6 +29,9 @@ class _TaskScreenState extends State<TaskScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget.categoryTitle),
+        actions: [
+          IconButton(icon: Icon(Icons.search),onPressed: () {}),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showTaskDialog,
@@ -44,19 +48,42 @@ class _TaskScreenState extends State<TaskScreen> {
               itemCount: taskList.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  leading: Checkbox(
-                    value: taskList[index].isCompleted,
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<TaskBloc>().add(
-                          UpdateTaskEvent(
-                            categoryTitle: widget.categoryTitle,
-                            task: taskList[index].task,
-                            isCompleted: value,
-                          ),
-                        );
-                      }
-                    },
+                  leading: DottedBorder(
+                    color: Colors.green,
+                    borderType: BorderType.Circle,
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.transparent)
+                      ),
+                      child: Checkbox(
+                        side: WidgetStateBorderSide.resolveWith(
+                              (states) => BorderSide.none,
+                        ),
+                        checkColor: Colors.white,
+                        fillColor: WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return Colors.green;
+                          }
+                          return null;
+                        }),
+                        value: taskList[index].isCompleted,
+                        onChanged: (value) {
+                          if (value != null) {
+                            context.read<TaskBloc>().add(
+                              UpdateTaskEvent(
+                                categoryTitle: widget.categoryTitle,
+                                task: taskList[index].task,
+                                isCompleted: value,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ),
                   title: Text(taskList[index].task),
                 );
