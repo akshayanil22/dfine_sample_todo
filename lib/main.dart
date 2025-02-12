@@ -1,3 +1,4 @@
+import 'package:dfine_todo/bloc/tasks/tasks_bloc.dart';
 import 'package:dfine_todo/bloc/todo/todo_bloc.dart';
 import 'package:dfine_todo/screens/splash_screen.dart';
 import 'package:dfine_todo/shared/navigation_helper.dart';
@@ -19,6 +20,7 @@ void main() async {
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => ThemeBloc()),
         BlocProvider(create: (context) => TodoBloc()),
+        BlocProvider(create: (context) => TaskBloc()),
       ],
       child: MyApp(),
     ),

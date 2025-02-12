@@ -4,6 +4,7 @@ import 'package:dfine_todo/bloc/theme/theme_bloc.dart';
 import 'package:dfine_todo/bloc/todo/todo_bloc.dart';
 import 'package:dfine_todo/models/category_model.dart';
 import 'package:dfine_todo/screens/settings_screen.dart';
+import 'package:dfine_todo/screens/task_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
             log(state.toString());
             if(state is TodoLoading){
               return Center(child: CircularProgressIndicator());
-            }else if(state is ListCategory){
+            }else if(state is ListCategory ){
 
               List<CategoryModel> categories = state.category;
 
@@ -68,100 +69,111 @@ class _HomeScreenState extends State<HomeScreen> {
                   singleCategory = categories[index-1];
                 }
 
-                return Container(
-                  margin: EdgeInsets.all(5),
-                  padding: EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                      color: context.read<ThemeBloc>().state.theme == AppTheme.light? Colors.white:Colors.blueGrey.shade900,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          offset: const Offset(
-                            0.0,
-                            0.0,
-                          ),
-                          blurRadius: 1.0,
-                          spreadRadius: 1.0,
-                        )
-                      ]
-                  ),
-                  child: index==0?Center(child: FloatingActionButton(onPressed: (){
-                    showDialog(context: context, barrierDismissible: false,builder: (context) {
-                      return BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 100.0),
-                          child: SimpleDialog(
-                            alignment: Alignment.topCenter,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)
+                return GestureDetector(
+                  onTap: index==0?null:(){
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => TaskScreen(categoryTitle: singleCategory.title,)));
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(5),
+                    padding: EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                        color: context.read<ThemeBloc>().state.theme == AppTheme.light? Colors.white:Colors.blueGrey.shade900,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: const Offset(
+                              0.0,
+                              0.0,
                             ),
-                            clipBehavior: Clip.none,
-                            children: [
-                              Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 12),
-                                    clipBehavior: Clip.none,
-                                    width: 200,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        TextField(
-                                          controller: iconController,
-                                          decoration: InputDecoration(
-                                            hintText: 'Icon',
-                                            border: InputBorder.none
-                                          ),
-                                        ),
-                                        TextField(
-                                          controller: titleController,
-                                          onSubmitted: (value) {
-                                            Navigator.pop(context,true);
-                                          },
-                                          decoration: InputDecoration(
-                                              hintText: 'Title',
+                            blurRadius: 1.0,
+                            spreadRadius: 1.0,
+                          )
+                        ]
+                    ),
+                    child: index==0?Center(child: FloatingActionButton(onPressed: (){
+                      showDialog(context: context, barrierDismissible: false,builder: (context) {
+                        return BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 100.0),
+                            child: SimpleDialog(
+                              alignment: Alignment.topCenter,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)
+                              ),
+                              clipBehavior: Clip.none,
+                              children: [
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 12),
+                                      clipBehavior: Clip.none,
+                                      width: 200,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          TextField(
+                                            autofocus: true,
+                                            textInputAction: TextInputAction.next,
+                                            controller: iconController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Icon',
                                               border: InputBorder.none
+                                            ),
                                           ),
-                                        ),
-                                        Text('0 Tasks')
-                                      ],
+                                          TextField(
+                                            controller: titleController,
+                                            onSubmitted: (value) {
+                                              if (titleController.text.isNotEmpty && iconController.text.isNotEmpty) {
+                                                context.read<TodoBloc>().add(
+                                                  AddCategoryEvent(
+                                                    categoryTitle: titleController.text.trim(),
+                                                    categoryIcon: iconController.text.trim(),
+                                                    taskCount: 0,
+                                                  ),
+                                                );
+                                              }
+
+                                              titleController.clear();
+                                              iconController.clear();
+                                              Navigator.pop(context);
+                                            },
+                                            decoration: InputDecoration(
+                                                hintText: 'Title',
+                                                border: InputBorder.none
+                                            ),
+                                          ),
+                                          Text('0 Tasks')
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Positioned(
-                                      right: -20,
-                                      top: -20,
-                                      child: SizedBox(
-                                        height: 30,
-                                        child: FloatingActionButton(
-                                            onPressed: (){
-                                          Navigator.pop(context);
-                                        }, child: Icon(Icons.clear,size: 14,)),
-                                      )),
-                                ],
-                              )
-                            ],
+                                    Positioned(
+                                        right: -20,
+                                        top: -20,
+                                        child: SizedBox(
+                                          height: 30,
+                                          child: FloatingActionButton(
+                                              onPressed: (){
+                                            Navigator.pop(context);
+                                          }, child: Icon(Icons.clear,size: 14,)),
+                                        )),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },).then((value) {
-                      if(value!= null){
-                        if(titleController.text.isNotEmpty && iconController.text.isNotEmpty){
-                          if(context.mounted){
-                            BlocProvider.of<TodoBloc>(context).add(AddCategoryEvent(categoryTitle: titleController.text, categoryIcon: iconController.text, taskCount: 0));
-                          }
-                        }
-                      }
-                    },);
-                  },child: Icon(Icons.add),),):Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(singleCategory.icon,style: TextStyle(fontSize: 32),),
-                      Text(singleCategory.title,style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                      Text(singleCategory.taskCount),
-                    ],
+                        );
+                      },);
+                    },child: Icon(Icons.add),),):Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(singleCategory.icon,style: TextStyle(fontSize: 32),),
+                        Text(singleCategory.title,style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                        Text(singleCategory.taskCount),
+                      ],
+                    ),
                   ),
                 );
               },);
