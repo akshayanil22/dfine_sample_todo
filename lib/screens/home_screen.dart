@@ -53,12 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BlocConsumer<TodoBloc, TodoState>(
           listener: (context, state) {},
           builder: (context, state) {
-            log(state.toString());
-            if(state is TodoLoading){
-              return Center(child: CircularProgressIndicator());
-            }else if(state is ListCategory ){
+            if(state is ListCategory ){
 
-              List<CategoryModel> categories = state.category;
+              List<CategoryModel> categories = state.categories;
 
               return GridView.builder(itemCount: categories.length+1,gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, // spacing between columns
@@ -177,8 +174,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               },);
+            }else{
+              return Center(child: CircularProgressIndicator());
             }
-            return SizedBox();
           },
         ),
       ),

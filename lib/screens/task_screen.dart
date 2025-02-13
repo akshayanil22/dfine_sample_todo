@@ -39,9 +39,6 @@ class _TaskScreenState extends State<TaskScreen> {
       ),
       body: BlocBuilder<TaskBloc, TasksState>(
         builder: (context, state) {
-          if (state is TaskLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
           if (state is ListTasks) {
             List<TaskModel> taskList = state.tasks;
             return ListView.builder(
@@ -89,8 +86,9 @@ class _TaskScreenState extends State<TaskScreen> {
                 );
               },
             );
+          }else{
+            return Center(child: CircularProgressIndicator());
           }
-          return const SizedBox();
         },
       ),
     );
