@@ -1,8 +1,5 @@
 import 'dart:developer';
-
-import 'package:bloc/bloc.dart';
 import 'package:dfine_todo/models/category_model.dart';
-import 'package:meta/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,8 +17,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<ListCategoryEvent>(_listCategory);
   }
 
-
-  Future<void> _handleCategory(AddCategoryEvent event, Emitter<TodoState> emit) async {
+  Future<void> _handleCategory(
+      AddCategoryEvent event, Emitter<TodoState> emit) async {
     try {
       final credential = _auth.currentUser;
 
@@ -51,7 +48,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
       // Firestore reference
       final userDoc = _fireStore.collection("users").doc(credential.uid);
-      final categoryDoc = userDoc.collection('categories').doc(event.categoryTitle);
+      final categoryDoc =
+          userDoc.collection('categories').doc(event.categoryTitle);
 
       // Add the new category to Firestore
       await categoryDoc.set({
@@ -76,7 +74,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
   }
 
-  Future<void> _listCategory(ListCategoryEvent event, Emitter<TodoState> emit) async {
+  Future<void> _listCategory(
+      ListCategoryEvent event, Emitter<TodoState> emit) async {
     emit(TodoLoading());
     try {
       final credential = _auth.currentUser;
@@ -109,5 +108,4 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       emit(TodoError(message: e.toString()));
     }
   }
-
 }
