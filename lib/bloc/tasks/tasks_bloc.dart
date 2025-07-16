@@ -1,8 +1,5 @@
 import 'dart:developer';
-
-import 'package:bloc/bloc.dart';
 import 'package:dfine_todo/models/task_model.dart';
-import 'package:meta/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,7 +18,8 @@ class TaskBloc extends Bloc<TasksEvent, TasksState> {
     on<ListTaskEvent>(_listTasks);
   }
 
-  Future<void> _handleTasks(AddTaskEvent event, Emitter<TasksState> emit) async {
+  Future<void> _handleTasks(
+      AddTaskEvent event, Emitter<TasksState> emit) async {
     try {
       final credential = _auth.currentUser;
 
@@ -37,20 +35,18 @@ class TaskBloc extends Bloc<TasksEvent, TasksState> {
       final currentTasks = currentState.tasks;
 
       // Optimistically add the new category to the local state
-      final newTask = TaskModel(
-        task: event.task,
-        isCompleted: event.isCompleted
-      );
+      final newTask =
+          TaskModel(task: event.task, isCompleted: event.isCompleted);
 
-      final updatedTasks = List<TaskModel>.from(currentTasks)
-        ..add(newTask);
+      final updatedTasks = List<TaskModel>.from(currentTasks)..add(newTask);
 
       // Emit the new state immediately
       emit(ListTasks(tasks: updatedTasks));
 
       // FireStore reference
       final userDoc = _fireStore.collection("users").doc(credential.uid);
-      final categoryDoc = userDoc.collection('categories').doc(event.categoryTitle);
+      final categoryDoc =
+          userDoc.collection('categories').doc(event.categoryTitle);
       final tasksCollection = categoryDoc.collection('tasks');
 
       // Perform the FireStore update in the background
@@ -74,7 +70,8 @@ class TaskBloc extends Bloc<TasksEvent, TasksState> {
     }
   }
 
-  Future<void> _updateTasks(UpdateTaskEvent event, Emitter<TasksState> emit) async {
+  Future<void> _updateTasks(
+      UpdateTaskEvent event, Emitter<TasksState> emit) async {
     try {
       final credential = _auth.currentUser;
 
@@ -101,7 +98,8 @@ class TaskBloc extends Bloc<TasksEvent, TasksState> {
 
       // FireStore references
       final userDoc = _fireStore.collection("users").doc(credential.uid);
-      final categoryDoc = userDoc.collection('categories').doc(event.categoryTitle);
+      final categoryDoc =
+          userDoc.collection('categories').doc(event.categoryTitle);
       final tasksCollection = categoryDoc.collection('tasks');
 
       // Perform the FireStore update in the background
@@ -127,8 +125,6 @@ class TaskBloc extends Bloc<TasksEvent, TasksState> {
       }
     }
   }
-
-
 
   Future<void> _listTasks(ListTaskEvent event, Emitter<TasksState> emit) async {
     emit(TaskLoading());
@@ -163,6 +159,4 @@ class TaskBloc extends Bloc<TasksEvent, TasksState> {
       emit(TaskError(message: e.toString()));
     }
   }
-
-
 }
