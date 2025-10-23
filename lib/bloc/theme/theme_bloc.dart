@@ -30,15 +30,17 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     on<LoadTheme>(_handleLoadTheme);
   }
 
-
-  Future<void> _handleLoadTheme(LoadTheme event, Emitter<ThemeState> emit) async {
+  Future<void> _handleLoadTheme(
+      LoadTheme event, Emitter<ThemeState> emit) async {
     final prefs = await SharedPreferences.getInstance();
     final isDarkMode = prefs.getBool('isDarkMode') ?? false;
     emit(ThemeState(theme: isDarkMode ? AppTheme.dark : AppTheme.light));
   }
 
-  Future<void> _handleToggleTheme(ToggleTheme event, Emitter<ThemeState> emit) async {
-    final newTheme = state.theme == AppTheme.light ? AppTheme.dark : AppTheme.light;
+  Future<void> _handleToggleTheme(
+      ToggleTheme event, Emitter<ThemeState> emit) async {
+    final newTheme =
+        state.theme == AppTheme.light ? AppTheme.dark : AppTheme.light;
     emit(ThemeState(theme: newTheme));
 
     final prefs = await SharedPreferences.getInstance();

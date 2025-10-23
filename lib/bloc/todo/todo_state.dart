@@ -11,14 +11,14 @@ class TodoInitial extends TodoState {}
 
 class TodoLoading extends TodoState {}
 
-class TodoLoaded extends TodoState {
-  final String category;
+// class TodoLoaded extends TodoState {
+//   final String category;
 
-  const TodoLoaded({required this.category});
+//   const TodoLoaded({required this.category});
 
-  @override
-  List<Object> get props => [category]; // Include `category` in equality checks
-}
+//   @override
+//   List<Object> get props => [category]; // Include `category` in equality checks
+// }
 
 class ListCategory extends TodoState {
   final List<CategoryModel> categories; // Renamed for clarity
@@ -26,7 +26,8 @@ class ListCategory extends TodoState {
   const ListCategory({required this.categories});
 
   @override
-  List<Object> get props => [categories]; // Include `categories` in equality checks
+  List<Object> get props =>
+      [categories]; // Include `categories` in equality checks
 }
 
 class TodoError extends TodoState {

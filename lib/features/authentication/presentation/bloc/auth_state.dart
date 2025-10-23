@@ -10,8 +10,8 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class Authenticated extends AuthState {
-  final String email;
-  Authenticated({required this.email});
+  Authenticated({required this.userDetails});
+  final UserEntity userDetails;
 }
 
 class AuthPasswordResetSuccess extends AuthState {

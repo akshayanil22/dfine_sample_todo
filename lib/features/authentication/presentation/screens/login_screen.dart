@@ -1,25 +1,38 @@
-import 'package:dfine_todo/screens/signup_screen.dart';
+import 'package:dfine_todo/features/authentication/presentation/screens/forgot_password_screen.dart';
+import 'package:dfine_todo/screens/home_screen.dart';
+import 'package:dfine_todo/features/authentication/presentation/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/auth/auth_bloc.dart';
+import '../bloc/auth_bloc.dart';
 import '../widgets/custom_button_widget.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
-  ForgotPasswordScreen({super.key});
+
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Forgot Password'),
-      ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthPasswordResetSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Successfully send mail')));
-            Navigator.pop(context);
+          if (state is Authenticated) {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (_) => HomeScreen()));
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
@@ -32,6 +45,15 @@ class ForgotPasswordScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 100),
+                Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'mimo',
+                      style: TextStyle(
+                          fontSize: 64,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic),
+                    )),
                 Card(
                     child: TextField(
                         controller: emailController,
@@ -40,18 +62,34 @@ class ForgotPasswordScreen extends StatelessWidget {
                             labelStyle: TextStyle(color: Colors.grey),
                             border: OutlineInputBorder(
                                 borderSide: BorderSide.none)))),
-                Text(
-                  'Enter the email address you used to create your account and we will email you a link to reset your password',
-                  textAlign: TextAlign.center,
+                SizedBox(
+                  height: 10,
                 ),
+                Card(
+                    child: TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                      labelText: "Password",
+                      labelStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(borderSide: BorderSide.none)),
+                  obscureText: true,
+                )),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => ForgotPasswordScreen()));
+                    },
+                    child: Text('Forgot Password?')),
                 SizedBox(
                   height: 20,
                 ),
                 CustomButton(
                   onTap: () {
-                    BlocProvider.of<AuthBloc>(context)
-                        .add(ForgotPasswordRequested(
+                    BlocProvider.of<AuthBloc>(context).add(SignInRequested(
                       email: emailController.text,
+                      password: passwordController.text,
                     ));
                   },
                 ),
